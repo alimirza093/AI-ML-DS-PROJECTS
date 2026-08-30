@@ -159,7 +159,7 @@ ehthumbs.db
 
 # Model files
 *.h5
-*.pkl
+# *.pkl
 *.pickle
 *.joblib
 *.pth
