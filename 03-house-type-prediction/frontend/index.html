@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NestType — House Type Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="bg-aurora" aria-hidden="true"></div>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-name">NestType</span>
+    </div>
+    <p class="brand-tag">NYC room-type intelligence</p>
+  </header>
+
+  <main class="layout">
+    <section class="hero">
+      <h1>Predict the listing’s room type</h1>
+      <p>Feed in location, price, and listing signals — get an instant classification with confidence scores.</p>
+      <div class="hero-actions">
+        <button type="button" class="btn ghost" id="btn-demo">Try demo listing</button>
+        <button type="button" class="btn ghost" id="btn-reset">Reset form</button>
+      </div>
+    </section>
+
+    <section class="workspace">
+      <form id="predict-form" class="panel form-panel" novalidate>
+        <div class="panel-head">
+          <h2>Listing features</h2>
+          <span class="step-pill" id="step-indicator">0 / 10 ready</span>
+        </div>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Borough</span>
+            <select id="neighbourhood_group" name="neighbourhood_group" required>
+              <option value="">Select borough</option>
+              <option value="Bronx">Bronx</option>
+              <option value="Brooklyn">Brooklyn</option>
+              <option value="Manhattan">Manhattan</option>
+              <option value="Queens">Queens</option>
+              <option value="Staten Island">Staten Island</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Neighbourhood</span>
+            <select id="neighbourhood" name="neighbourhood" required disabled>
+              <option value="">Select neighbourhood</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Latitude</span>
+            <input type="number" id="latitude" name="latitude" step="0.00001" min="-90" max="90" placeholder="40.75362" required />
+          </label>
+
+          <label class="field">
+            <span>Longitude</span>
+            <input type="number" id="longitude" name="longitude" step="0.00001" min="-180" max="180" placeholder="-73.98377" required />
+          </label>
+
+          <label class="field">
+            <span>Price / night ($)</span>
+            <input type="number" id="price" name="price" step="0.01" min="0.01" placeholder="150" required />
+            <input type="range" id="price-range" class="range" min="20" max="500" value="150" />
+          </label>
+
+          <label class="field">
+            <span>Minimum nights</span>
+            <input type="number" id="minimum_nights" name="minimum_nights" min="1" max="365" placeholder="2" required />
+          </label>
+
+          <label class="field">
+            <span>Number of reviews</span>
+            <input type="number" id="number_of_reviews" name="number_of_reviews" min="0" placeholder="45" required />
+          </label>
+
+          <label class="field">
+            <span>Reviews / month</span>
+            <input type="number" id="reviews_per_month" name="reviews_per_month" step="0.01" min="0" placeholder="1.2" required />
+          </label>
+
+          <label class="field">
+            <span>Host listings count</span>
+            <input type="number" id="calculated_host_listings_count" name="calculated_host_listings_count" min="0" placeholder="1" required />
+          </label>
+
+          <label class="field">
+            <span>Availability (days / 365)</span>
+            <input type="number" id="availability_365" name="availability_365" min="0" max="365" placeholder="200" required />
+            <input type="range" id="availability-range" class="range" min="0" max="365" value="200" />
+          </label>
+        </div>
+
+        <p class="form-error" id="form-error" role="alert" hidden></p>
+
+        <button type="submit" class="btn primary" id="btn-predict">
+          <span class="btn-label">Predict room type</span>
+          <span class="btn-spinner" aria-hidden="true"></span>
+        </button>
+      </form>
+
+      <aside class="panel result-panel" id="result-panel" aria-live="polite">
+        <div class="panel-head">
+          <h2>Prediction</h2>
+          <span class="live-dot" id="live-dot">Waiting</span>
+        </div>
+
+        <div class="result-empty" id="result-empty">
+          <div class="orbit" aria-hidden="true">
+            <span></span><span></span><span></span>
+          </div>
+          <p>Results appear here after you submit a listing.</p>
+        </div>
+
+        <div class="result-body" id="result-body" hidden>
+          <div class="prediction-badge" id="prediction-badge">
+            <span class="prediction-icon" id="prediction-icon" aria-hidden="true"></span>
+            <div>
+              <p class="prediction-label">Predicted room type</p>
+              <h3 id="prediction-type">—</h3>
+            </div>
+          </div>
+
+          <div class="confidence-block">
+            <div class="confidence-head">
+              <span>Model confidence</span>
+              <strong id="confidence-value">0%</strong>
+            </div>
+            <div class="confidence-track">
+              <div class="confidence-fill" id="confidence-fill"></div>
+            </div>
+          </div>
+
+          <div class="prob-list" id="prob-list"></div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Powered by a Random Forest pipeline · NestType API</p>
+  </footer>
+
+  <script src="./script.js"></script>
+</body>
+</html>
