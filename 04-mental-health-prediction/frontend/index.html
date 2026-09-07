@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MindPulse — Mental Health Score Predictor</title>
+  <meta name="description" content="Predict your mental health score from lifestyle and social media habits." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="aurora" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="hero">
+      <p class="brand">MindPulse</p>
+      <h1>Know your pulse before burnout hits.</h1>
+      <p class="tagline">
+        Estimate a mental health score from sleep, study, activity, and social habits —
+        powered by a tuned Random Forest model.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#predictor">Get my score</a>
+        <a class="btn btn-ghost" href="#about">How it works</a>
+      </div>
+    </header>
+
+    <main id="predictor" class="layout">
+      <section class="panel form-panel" aria-labelledby="form-title">
+        <div class="panel-head">
+          <h2 id="form-title">Lifestyle inputs</h2>
+          <p>Fill in your habits. All fields are required for a prediction.</p>
+        </div>
+
+        <form id="predict-form" novalidate>
+          <fieldset class="field-group">
+            <legend>Who you are</legend>
+            <div class="grid">
+              <label class="field">
+                <span>Age</span>
+                <input type="number" name="Age" min="13" max="80" value="21" required />
+              </label>
+              <label class="field">
+                <span>Gender</span>
+                <select name="Gender" required>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Country</span>
+                <select name="Country_Grouped" required>
+                  <option value="Other">Other</option>
+                  <option value="Canada">Canada</option>
+                  <option value="USA">USA</option>
+                  <option value="India">India</option>
+                  <option value="Australia">Australia</option>
+                  <option value="UK">UK</option>
+                  <option value="Germany">Germany</option>
+                  <option value="Mexico">Mexico</option>
+                  <option value="Turkey">Turkey</option>
+                  <option value="Pakistan">Pakistan</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Academic level</span>
+                <select name="Academic_Level" required>
+                  <option value="High School">High School</option>
+                  <option value="Undergraduate" selected>Undergraduate</option>
+                  <option value="Graduate">Graduate</option>
+                </select>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>Digital habits</legend>
+            <div class="grid">
+              <label class="field">
+                <span>Most used platform</span>
+                <select name="Most_Used_Platform" required>
+                  <option>Instagram</option>
+                  <option>TikTok</option>
+                  <option>YouTube</option>
+                  <option>Facebook</option>
+                  <option>Snapchat</option>
+                  <option>Twitter</option>
+                  <option>LinkedIn</option>
+                  <option>WhatsApp</option>
+                  <option>WeChat</option>
+                  <option>LINE</option>
+                  <option>KakaoTalk</option>
+                  <option>VKontakte</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Purpose of use</span>
+                <select name="Purpose_Of_Use" required>
+                  <option>Entertainment</option>
+                  <option>Education</option>
+                  <option>Networking</option>
+                  <option>News</option>
+                </select>
+              </label>
+              <label class="field range-field">
+                <span>Avg daily usage <em id="usage-val">4.0</em> h</span>
+                <input type="range" name="Avg_Daily_Usage_Hours" min="0" max="24" step="0.1" value="4" />
+              </label>
+              <label class="field range-field">
+                <span>Daily unlocks <em id="unlocks-val">134</em></span>
+                <input type="range" name="Daily_Unlocks" min="0" max="400" step="1" value="134" />
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field-group">
+            <legend>Wellness balance</legend>
+            <div class="grid">
+              <label class="field range-field">
+                <span>Study hours <em id="study-val">4.5</em> h</span>
+                <input type="range" name="Study_Hours" min="0" max="16" step="0.1" value="4.5" />
+              </label>
+              <label class="field range-field">
+                <span>Physical activity <em id="activity-val">2.2</em> h</span>
+                <input type="range" name="Physical_Activity_Hours" min="0" max="8" step="0.1" value="2.2" />
+              </label>
+              <label class="field range-field">
+                <span>Sleep per night <em id="sleep-val">6.7</em> h</span>
+                <input type="range" name="Sleep_Hours_Per_Night" min="0" max="24" step="0.1" value="6.7" />
+              </label>
+              <label class="field">
+                <span>Stress level</span>
+                <div class="chip-group" role="radiogroup" aria-label="Stress level">
+                  <label class="chip"><input type="radio" name="Stress_Level" value="Low" /><span>Low</span></label>
+                  <label class="chip"><input type="radio" name="Stress_Level" value="Medium" checked /><span>Medium</span></label>
+                  <label class="chip"><input type="radio" name="Stress_Level" value="High" /><span>High</span></label>
+                  <label class="chip"><input type="radio" name="Stress_Level" value="Very High" /><span>Very High</span></label>
+                </div>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="submit-btn">
+              <span class="btn-label">Predict score</span>
+              <span class="btn-spinner" hidden aria-hidden="true"></span>
+            </button>
+            <button type="reset" class="btn btn-ghost" id="reset-btn">Reset</button>
+          </div>
+          <p class="form-status" id="form-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <aside class="panel result-panel" aria-live="polite">
+        <div class="panel-head">
+          <h2>Your MindPulse</h2>
+          <p>Score ranges roughly from 3.6 to 9.4 in the training data (higher is better).</p>
+        </div>
+
+        <div class="gauge-wrap" id="gauge-wrap">
+          <svg class="gauge" viewBox="0 0 220 220" role="img" aria-label="Mental health score gauge">
+            <defs>
+              <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#2dd4bf" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+            </defs>
+            <circle class="gauge-track" cx="110" cy="110" r="88" />
+            <circle class="gauge-fill" id="gauge-fill" cx="110" cy="110" r="88" />
+          </svg>
+          <div class="gauge-center">
+            <span class="score-value" id="score-value">—</span>
+            <span class="score-label" id="score-label">Awaiting input</span>
+          </div>
+        </div>
+
+        <ul class="insight-list" id="insight-list">
+          <li>Adjust sleep, stress, and screen time to see how the score responds.</li>
+          <li>This is a statistical estimate — not a clinical diagnosis.</li>
+        </ul>
+      </aside>
+    </main>
+
+    <section id="about" class="about">
+      <h2>How it works</h2>
+      <p>
+        MindPulse calls a FastAPI backend that runs a scikit-learn pipeline
+        (preprocessing + Random Forest regressor) trained on student lifestyle data.
+        Country values outside the top set are mapped to <code>Other</code>.
+      </p>
+    </section>
+
+    <footer class="footer">
+      <p>MindPulse · Educational ML demo · Not medical advice</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
