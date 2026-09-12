@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Real-time text emotion detection powered by a GRU deep learning model." />
+  <title>EmotiSense — Emotion Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+<body data-emotion="neutral">
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
+  <div class="orb orb-a" aria-hidden="true"></div>
+  <div class="orb orb-b" aria-hidden="true"></div>
+  <div class="orb orb-c" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <div class="brand-text">
+          <strong>EmotiSense</strong>
+          <span>GRU Emotion Detection</span>
+        </div>
+      </div>
+      <div class="status-pill" id="health-status" title="API health">
+        <span class="status-dot"></span>
+        <span id="health-label">Checking…</span>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Text Emotion Intelligence</p>
+        <h1>Feel the meaning<br />behind every sentence.</h1>
+        <p class="lede">
+          Paste any message and EmotiSense classifies it into sadness, joy, love, anger, fear, or surprise — with live confidence scores.
+        </p>
+      </section>
+
+      <section class="workspace">
+        <article class="panel input-panel">
+          <div class="panel-head">
+            <h2>Analyze text</h2>
+            <span class="char-count" id="char-count">0 / 2000</span>
+          </div>
+
+          <label class="sr-only" for="text-input">Text to analyze</label>
+          <textarea
+            id="text-input"
+            maxlength="2000"
+            rows="7"
+            placeholder="Type or paste text here… e.g. I finally got the job offer and I can’t stop smiling!"
+          ></textarea>
+
+          <div class="samples" id="samples">
+            <button type="button" class="chip" data-sample="I finally got the job offer and I can’t stop smiling!">Joy</button>
+            <button type="button" class="chip" data-sample="I miss you so much it hurts when you’re away.">Love</button>
+            <button type="button" class="chip" data-sample="This is completely unfair and I’m furious about it.">Anger</button>
+            <button type="button" class="chip" data-sample="I’m terrified something terrible is about to happen.">Fear</button>
+            <button type="button" class="chip" data-sample="I didn’t expect that at all — what a shock!">Surprise</button>
+            <button type="button" class="chip" data-sample="Everything feels empty and I just want to cry.">Sadness</button>
+          </div>
+
+          <div class="actions">
+            <button type="button" class="btn btn-ghost" id="clear-btn">Clear</button>
+            <button type="button" class="btn btn-primary" id="analyze-btn">
+              <span class="btn-label">Detect Emotion</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+          </div>
+          <p class="error-msg" id="error-msg" role="alert" hidden></p>
+        </article>
+
+        <article class="panel result-panel" id="result-panel">
+          <div class="empty-state" id="empty-state">
+            <div class="empty-ring"></div>
+            <h3>Awaiting analysis</h3>
+            <p>Enter text and hit Detect Emotion to see the predicted class and probability breakdown.</p>
+          </div>
+
+          <div class="result-content" id="result-content" hidden>
+            <div class="emotion-hero">
+              <div class="emotion-glow" aria-hidden="true"></div>
+              <div class="emotion-emoji" id="emotion-emoji">😄</div>
+              <div class="emotion-meta">
+                <p class="emotion-label">Predicted emotion</p>
+                <h3 id="emotion-name">Joy</h3>
+                <div class="confidence-row">
+                  <div class="confidence-track">
+                    <div class="confidence-fill" id="confidence-fill"></div>
+                  </div>
+                  <span id="confidence-value">0%</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="probs">
+              <div class="panel-head compact">
+                <h2>Probability map</h2>
+                <span class="hint">All six classes</span>
+              </div>
+              <ul class="prob-list" id="prob-list"></ul>
+            </div>
+
+            <blockquote class="analyzed-text" id="analyzed-text"></blockquote>
+          </div>
+        </article>
+      </section>
+
+      <section class="history-section" id="history-section" hidden>
+        <div class="panel-head">
+          <h2>Recent analyses</h2>
+          <button type="button" class="link-btn" id="clear-history">Clear history</button>
+        </div>
+        <ul class="history-list" id="history-list"></ul>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>Built with FastAPI · TensorFlow GRU · NLTK preprocessing</p>
+      <p class="footer-note">Emotions: sadness · joy · love · anger · fear · surprise</p>
+    </footer>
+  </div>
+
+  <script src="/static/js/app.js" defer></script>
+</body>
+</html>
